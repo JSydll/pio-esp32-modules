@@ -1,0 +1,26 @@
+{
+    "name": "esp32-modules",
+    "version": "0.1.1",
+    "description": "Provides some common functionalities for ESP32 based prototyping projects.",
+    "keywords": [
+        "esp32",
+        "prototyping"
+    ],
+    "authors": {
+        "name": "Joschka Seydell",
+        "email": "joschka@seydell.org"
+    },
+    "license": "MIT",
+    "platforms": [
+        "espressif32"
+    ],
+    "dependencies": [
+        {
+            "name": "arkhipenko/TaskScheduler",
+            "version": "^3.2.2"
+        },
+        {
+            "name": "ESP Async WebServer"
+        }
+    ]
+}
