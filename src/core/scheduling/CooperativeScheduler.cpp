@@ -19,12 +19,12 @@ CooperativeScheduler::CooperativeScheduler(const TaskCallback& mainTask,
   // Setup main task
   mMainTask.set(mainInterval, TASK_FOREVER, mainTask);
   mScheduler->addTask(mMainTask);
-  mMainTask.enable();
+  mMainTask.enableDelayed();  // enableDelayed to not immediately execute (enable does that).
   // Setup garbage collection
   mGarbageCollectionTask.set(GARBAGE_COLLECTION_INTERVAL, TASK_FOREVER,
                              [this]() { RemoveDisabledTasks(); });
   mScheduler->addTask(mGarbageCollectionTask);
-  mGarbageCollectionTask.enable();
+  mGarbageCollectionTask.enableDelayed();
 }
 
 CooperativeScheduler::~CooperativeScheduler()
@@ -71,13 +71,17 @@ TaskId CooperativeScheduler::AddTask(const TaskType type, const TaskDuration tim
                                      const TaskDuration timeout, const TaskCallback& task)
 {
   std::unique_ptr<Task> t{new Task(timespan, static_cast<uint32_t>(type), task, mScheduler.get(),
-                                   true, nullptr, [this]() { MarkTaskAsDisabled(); })};
+                                   false, nullptr, [this]() { MarkTaskAsDisabled(); })};
   const TaskId id = t->getId();
-  const auto item = mTasks.emplace(id, std::move(t));
-  if (not item.second)
+  const auto res = mTasks.emplace(id, std::move(t));
+  const auto success = res.second;
+  if (not success)
   {
     return INVALID_TASKID;
   }
+  auto& it = res.first;
+  auto& stored = it->second;
+  stored->enableDelayed();  // enableDelayed to not immediately execute (enable does that).
   return id;
 }
 
