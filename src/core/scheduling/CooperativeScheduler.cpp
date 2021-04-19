@@ -70,8 +70,8 @@ void CooperativeScheduler::AbortAllTasks() { mScheduler->disableAll(); }
 TaskId CooperativeScheduler::AddTask(const TaskType type, const TaskDuration timespan,
                                      const TaskDuration timeout, const TaskCallback& task)
 {
-  std::unique_ptr<Task> t{new Task(timespan, TASK_ONCE, task, mScheduler.get(), true, nullptr,
-                                   [this]() { MarkTaskAsDisabled(); })};
+  std::unique_ptr<Task> t{new Task(timespan, static_cast<uint32_t>(type), task, mScheduler.get(),
+                                   true, nullptr, [this]() { MarkTaskAsDisabled(); })};
   const TaskId id = t->getId();
   const auto item = mTasks.emplace(id, std::move(t));
   if (not item.second)
