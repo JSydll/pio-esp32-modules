@@ -19,7 +19,7 @@
 namespace Esp32Modules::Core::Time
 {
 /** @brief Default to a european NTP server. */
-const std::string DEFAULT_NTP_SERVER{"europe.pool.ntp.org"};
+const std::string DEFAULT_NTP_SERVER{"pool.ntp.org"};
 
 /**
  * @brief Provides time synchronization via NTP protocol.
@@ -31,7 +31,7 @@ class NtpClient
    * @brief Setup the NTP client.
    *
    * @note Uses CET as timezone and daylight saving time switch by default.
-   * 
+   *
    * @param serverUrl URL of the NTP master server providing actual time.
    */
   NtpClient(const std::string& serverUrl = DEFAULT_NTP_SERVER);
@@ -48,10 +48,13 @@ class NtpClient
 
   /**
    * @brief Queries the NTP server for the current time.
-   * 
+   *
    * @return Information about the current time (only valid if the isValid member is true).
    */
   TimeInfo Now();
+
+ private:
+  const std::string mServerUrl;  // Persist the server URL as the ctime interfaces do not do that.
 };
 }  // namespace Esp32Modules::Core::Time
 

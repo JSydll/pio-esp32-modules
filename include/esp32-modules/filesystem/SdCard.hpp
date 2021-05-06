@@ -14,17 +14,19 @@
 // Standard header
 #include <cstdint>
 
+#include "SPI.h"
+
 // Platform header
 #include <FS.h>
 #include <SD.h>
-
-#include "SPI.h"
 
 namespace Esp32Modules::Filesystem
 {
 
 /**
  * @brief Represents and provides access to an SD card connected over SPI.
+ * 
+ * @attention Currently does not work together well with other modules like wifi
  *
  * Assumes the following wiring:
  *      SD Card | ESP32
@@ -45,7 +47,7 @@ class SdCard
    * @brief Sets up the SD card for interactions.
    */
   SdCard();
-  ~SdCard() = default;
+  ~SdCard();
 
   /**
    * @brief Indicates whether the SD card is available for reading/writing to it.
@@ -56,22 +58,22 @@ class SdCard
 
   /**
    * @brief Retrieves the filesystem handle used to access files on the SD card.
-   * 
+   *
    * @return fs::FS& Handle that can be used to open/read/write files.
    */
   fs::FS& GetFilesystemHandle();
 
   /**
    * @brief Provides the total size of the SD card in bytes.
-   * 
+   *
    * @return Size of the SD card.
    */
   size_t GetByteSize() const;
 
   /**
    * @brief Shows the number of bytes left for writing data to the SD card.
-   * 
-   * @return Number of bytes left. 
+   *
+   * @return Number of bytes left.
    */
   size_t GetBytesAvailable() const;
 
