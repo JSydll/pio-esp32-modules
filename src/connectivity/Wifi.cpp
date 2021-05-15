@@ -3,21 +3,34 @@
 namespace Esp32Modules::Connectivity::Wifi
 {
 
-WifiConnection::WifiConnection(const std::string& ssid, const std::string& password)
+void Radio::Disable()
 {
-  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.disconnect(true);  // Disconnect from the network
+  WiFi.mode(WIFI_OFF);    // Switch WiFi off
 }
 
-WifiConnection::~WifiConnection()
+void Radio::Enable(const WiFiMode_t mode)
 {
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_OFF);
+  WiFi.disconnect(false);
+  WiFi.mode(mode);
 }
+
+WifiConnection::WifiConnection(const std::string& ssid, const std::string& password,
+                               const std::string& hostname)
+{
+  Radio::Enable(WIFI_STA);
+  WiFi.config(INADDR_NONE, INADDR_NONE, INADDR_NONE);
+  WiFi.begin(ssid.c_str(), password.c_str());
+  WiFi.setHostname(hostname.c_str());
+}
+
+WifiConnection::~WifiConnection() { Radio::Disable(); }
 
 bool WifiConnection::IsConnected() const { return (WiFi.status() != WL_CONNECTED); }
 
 WifiAccessPoint::WifiAccessPoint(const std::string& ssid, const std::string& password)
 {
+  Radio::Enable(WIFI_AP);
   if (password.empty())
   {
     WiFi.softAP(ssid.c_str());
@@ -29,11 +42,7 @@ WifiAccessPoint::WifiAccessPoint(const std::string& ssid, const std::string& pas
   mIp = WiFi.softAPIP();
 }
 
-WifiAccessPoint::~WifiAccessPoint()
-{
-  WiFi.disconnect(true);
-  WiFi.mode(WIFI_OFF);
-}
+WifiAccessPoint::~WifiAccessPoint() { Radio::Disable(); }
 
 IPAddress WifiAccessPoint::GetAssignedIP() const { return mIp; }
 

@@ -19,6 +19,21 @@
 
 namespace Esp32Modules::Connectivity::Wifi
 {
+namespace Radio
+{
+/**
+ * @brief Switch off the Wifi radio.
+ */
+void Disable();
+
+/**
+ * @brief Reenable the Wifi radio in the given mode.
+ *
+ * @param mode Wifi radio mode to be enabled.
+ */
+void Enable(const WiFiMode_t mode);
+}  // namespace Radio
+
 /**
  * @brief Establishes a connection to an existing wifi network.
  */
@@ -30,8 +45,9 @@ class WifiConnection
    *
    * @param ssid Identifier (name) of the network to connect to.
    * @param password Password to be used (may be empty for unsecured networks).
+   * @param hostname Optional hostname to be visible in the wifi network.
    */
-  WifiConnection(const std::string& ssid, const std::string& password);
+  WifiConnection(const std::string& ssid, const std::string& password, const std::string& hostname = "esp32device");
 
   /**
    * @brief Cleans up all wifi resources.
